@@ -1,5 +1,5 @@
 {
-    "_comment" : "Create a AWS AMI ith AMZ Linux 2018 with Java and Tomcat",
+    "_comment" : "Create a AWS AMI with AMZ Linux 2018 with Java and Tomcat",
     "variables": {
       "aws_access_key": "",
       "aws_secret_key": "",
@@ -7,7 +7,7 @@
       "source_ami":"",
       "instance_type":"",
       "vpc_id": "",
-      "subnet_id": ""
+      "subnet_id": ""   
     },
     "_comment1" : "packer build -var \"aws_secret_key=foo\" template.json",
     "_comment2" : "packer build -var-file packer-vars.json template.json",
@@ -29,7 +29,7 @@
     "provisioners": [{
       "type": "shell",
       "inline": [
-        "sleep 30",
+        /*"sleep 30",
         "sudo apt update -y",
         "sudo apt install nginx -y",
         "sudo apt install git -y",
@@ -40,8 +40,23 @@
         "sudo cp webhooktesting/scorekeeper.js /var/www/html/scorekeeper.js",
         "sudo service nginx start",
         "sudo systemctl enable nginx",
-        "curl https://get.docker.com | bash"
+        "curl https://get.docker.com | bash" */
+        "sudo useradd -m ansibleadmin --shell /bin/bash",
+        "sudo mkdir -p /home/ansibleadmin/.ssh",
+        "sudo chown -R ansibleadmin /home/ansibleadmin/",
+        "sudo touch /home/ansibleadmin/.ssh/authorized_keys",
+        "sudo usermod -aG sudo ansibleadmin",
+        "echo 'ansibleadmin ALL=(ALL) NOPASSWD: ALL' | sudo tee -a /etc/sudoers",
+        "echo \"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC7R2RpW2fuA/Kq9R6ueYUYOv0S2LtWOOLBbi0FRZb1J0g4DcL3JvjQ2PbO9SI/m+/ui7AXkyeV8fLyHFdeJgaa5vmXJRV5sek0FeOemZTgR+5SK3DxCycxMB9aw5gusvr4ERIRk3XBaiCJ3JdbVFrxF3p9xeol/gHU7YM4tnei40+4U6W4tIUQl+doLRrpS42VWbgqrkFWP5NdM+KTW65kV+iXbN+1Uy/gah76E2Yyc2L91e3Nx8+CK6f+6VmFfMcJoS/E50JJ6IL7nWYYMVop29IoEzGKgMi3HZyraE9GnJeOd0C8/c8hCJZNNCMR3R97DorqTZ7gTAOwuJ/uGBOvsfH0jz1Lxr1aOL6ImR+ghf7S0TNHSQ0dwb5XJpX6PVRfuMegEteRAE1VbvEWtg7xgICSWTX48rqdlb9JZ2l7l2MAoWkbDQpgKKnNm7NdZPMH3fK3r7wnPOaVhV5n+NQRjEsivxs/HhBJqQGG07NgfJ/B0ntLVm9mSDEYArRUu58= dci-student@DESKTOP-OBTN1DS\" | sudo tee /home/ansibleadmin/.ssh/authorized_keys"
+      ]
+    }, 
+    {
+        "type": "shell",
+        "inline": [
+            "sudo apt update -y",
+            "curl https://get.docker.com | bash"
         ]
+
     },
     {
             "type": "file",
@@ -56,7 +71,12 @@
             "sudo systemctl daemon-reload",
             "sudo service docker restart"
         ]
-
+    },
+    {
+        "type": "shell",
+        "inline": [
+            "sudo apt install -y unzip stress net-tools jq"
+        ]
     }
 ]
   }
